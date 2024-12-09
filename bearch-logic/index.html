@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AhmadXyz kecerdasan Buatan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #e5e5e5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        .chat-box {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .chat-box .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .chat-box .user {
+            background: #1a73e8;
+            text-align: right;
+            color: #fff;
+        }
+
+        .chat-box .bot {
+            background: #0f3460;
+            text-align: left;
+            color: #fff;
+        }
+
+        .chat-box .code {
+            background: #1e1e2e;
+            color: #a6e22e;
+            font-family: "Courier New", Courier, monospace;
+            padding: 10px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .message-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-box input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .message-box button {
+            padding: 10px;
+            background: #0f3460;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .message-box button:hover {
+            background: #1a73e8;
+        }
+
+        .copy-button {
+            margin-top: 5px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .copy-button:hover {
+            background: #1558a6;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        footer a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AHMDXYZ AI</h1>
+            <p>Mesin Pencarian multidimensi</p>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <!-- Chat history will appear here -->
+        </div>
+
+        <div class="message-box">
+            <input type="text" id="userInput" placeholder="Ketik disini...">
+            <button onclick="sendMessage()">Kirim</button>
+        </div>
+
+        <footer>
+            Powered by <a href="https://wa.me/6281527100923">AhmadXyz</a>
+        </footer>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+
+            if (!input.value.trim()) {
+                alert('Please enter a message!');
+                return;
+            }
+
+            // Append user message to chat box
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('message', 'user');
+            userMessage.textContent = input.value;
+            chatBox.appendChild(userMessage);
+
+            // Scroll to the bottom of chat box
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const apiUrl = `https://deliriussapi-oficial.vercel.app/ia/gptprompt?text=${encodeURIComponent(input.value)}&prompt=Mulai dari sekarang nama mu adalah ahmad open ai, kemampuan mu adalah percakapan real time, bahasa multidimensi, pemberi solusi cerdas, pembelajaran kontekstual, kemampuan pemerograman luar biasa. Dan kamu diciptakan oleh ahmad, buat semua orang senang mengobrol dengan mu `;
+
+            // Clear input field
+            input.value = '';
+
+            const botMessage = document.createElement('div');
+            botMessage.classList.add('message', 'bot');
+            botMessage.textContent = 'Sedang memproses...';
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json(); // Parse JSON response
+                if (data.status && data.data) {
+                    // Check if the response is code
+                    if (data.data.includes("<") && data.data.includes(">")) {
+                        const codeBlock = document.createElement('div');
+                        codeBlock.classList.add('code');
+                        codeBlock.textContent = data.data;
+
+                        const copyButton = document.createElement('button');
+                        copyButton.classList.add('copy-button');
+                        copyButton.textContent = 'Copy Code';
+                        copyButton.onclick = () => navigator.clipboard.writeText(data.data);
+
+                        botMessage.textContent = '';
+                        botMessage.appendChild(codeBlock);
+                        botMessage.appendChild(copyButton);
+                    } else {
+                        botMessage.textContent = data.data; // Display regular response
+                    }
+                } else {
+                    botMessage.textContent = 'Error: Respons API tidak valid!';
+                }
+            } catch (error) {
+                botMessage.textContent = 'Error: Tidak dapat mengambil respons dari API!';
+            }
+
+            // Scroll to the bottom of chat box
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
