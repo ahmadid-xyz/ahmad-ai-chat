@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AhmdAi Chat Adalah Webs Ai Yang Dimana Menggunakan Bahasa Ai </title>
+    <title>AhmdAi Multi-User Chat</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
@@ -35,19 +35,6 @@
             cursor: pointer;
             border: none;
         }
-        .whatsapp-button {
-            background: #25D366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            border: none;
-            display: block;
-            margin: 10px auto;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-        }
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -58,15 +45,21 @@
 </head>
 <body>
     <div class="chat-container mt-10">
-        <h1 class="text-2xl text-center mb-5">Ahmadxyz Ai</h1>
+        <h1 class="text-2xl text-center mb-5">AhmdAi Multi-User Chat</h1>
+        
+        <!-- User Selector -->
+        <div class="mb-3">
+            <label for="username" class="block text-sm mb-1">Masukkan Nama Anda:</label>
+            <input id="username" type="text" placeholder="Nama Anda" class="input-field w-full" />
+        </div>
+
         <div id="chat-box" class="overflow-y-auto h-80 mb-5 p-3 bg-gray-800 rounded-lg">
             <!-- Chat messages will be appended here -->
         </div>
         <div class="flex items-center">
-            <input id="user-input" type="text" placeholder="Ketik Disini..." class="input-field" />
-            <button id="send-button" class="send-button ml-3">kirim</button>
+            <input id="user-input" type="text" placeholder="Ketik pesan Anda..." class="input-field" />
+            <button id="send-button" class="send-button ml-3">Kirim</button>
         </div>
-        <a href="https://wa.me/6281527100923?text=Halo,%20saya%20mengalami%20masalah%20dengan%20AhmdAi%20Chat." class="whatsapp-button">Hubungi Saya Jika Ada Yg Eror</a>
     </div>
     <div class="footer">
         &copy; 2025 AHMADXYZ.
@@ -75,19 +68,22 @@
     <script>
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
+        const usernameInput = document.getElementById('username');
         const sendButton = document.getElementById('send-button');
 
         sendButton.addEventListener('click', async () => {
             const message = userInput.value.trim();
-            if (!message) return;
+            const username = usernameInput.value.trim();
 
-            appendMessage('You', message);
+            if (!message || !username) {
+                alert('Harap masukkan nama Anda dan pesan.');
+                return;
+            }
+
+            appendMessage(username, message, true);
             userInput.value = '';
 
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // Set 5-second timeout
-
                 const response = await fetch('https://luminai.my.id/', {
                     method: 'POST',
                     headers: {
@@ -95,33 +91,31 @@
                     },
                     body: JSON.stringify({
                         content: message,
-                        user: 'Guest',
-                        prompt: `sekarang ubah gaya bicara mu menjadi kurang ajar, sombong dan jahat. Nama kamu adalah ahmd ai yang diciptakan oleh ahmad. Jika ada yang memarahi mu maka kamu harus berkata yang tidak sepatutnya dikatakan, buatlah orang orang kesal dengan mu. panggil orang dengan menggunakan kata gua dan lu. tambah sedikit bahasa kasar yang digunakan manusia`
-                    }),
-                    signal: controller.signal
+                        user: username,
+                        prompt: "namamu adalah ahmad-ai yang diciptakan oleh ahmadxyz! sifat kamu cerdas dan ramah. jawablah pertanyaan dengan bahasa yang gaul seperti gua dan lu untuk menyebut orang! buatlah orang lain nyaman saat mengobrol dengan mu."
+                    })
                 });
 
-                clearTimeout(timeoutId);
                 if (!response.ok) {
                     throw new Error(`Server returned ${response.status}`);
                 }
 
                 const data = await response.json();
                 if (data.result) {
-                    appendMessage('AhmdAi', data.result);
+                    appendMessage('AhmdAi', data.result, false);
                 } else {
-                    appendMessage('AhmdAi', 'Response format is invalid.');
+                    appendMessage('AhmdAi', 'Response format is invalid.', false);
                 }
             } catch (error) {
-                appendMessage('AhmdAi', 'Terjadi kesalahan: ' + (error.name === 'AbortError' ? 'Request timed out' : error.message));
+                appendMessage('AhmdAi', 'Terjadi kesalahan: ' + error.message, false);
             }
         });
 
-        function appendMessage(sender, message) {
+        function appendMessage(sender, message, isUser) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('mb-3', 'p-2', 'rounded-lg');
-            messageElement.style.backgroundColor = sender === 'You' ? '#4caf50' : '#1e3a8a';
-            messageElement.textContent = `${sender === 'You' ? 'Chat' : sender}: ${message}`;
+            messageElement.style.backgroundColor = isUser ? '#4caf50' : '#1e3a8a';
+            messageElement.textContent = `${sender}: ${message}`;
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
