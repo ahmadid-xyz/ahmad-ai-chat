@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AhmdAi Yang Dapat Membantu Hari Hari Anda Dengan Mudah</title>
+    <title>AhmdAi Mesin Pencarian Pintar Yang Dapat Membantu Anda</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
@@ -45,7 +45,7 @@
 </head>
 <body>
     <div class="chat-container mt-10">
-        <h1 class="text-2xl text-center mb-5">AhmdAi Multi Chat</h1>
+        <h1 class="text-2xl text-center mb-5">AhmdAi Multi Chat Id</h1>
         
         <!-- User Selector -->
         <div class="mb-3">
@@ -83,6 +83,8 @@
             appendMessage(username, message, true);
             userInput.value = '';
 
+            appendTypingIndicator(); // Tambahkan typing indicator
+
             try {
                 const response = await fetch('https://luminai.my.id/', {
                     method: 'POST',
@@ -96,17 +98,22 @@
                     })
                 });
 
+                removeTypingIndicator(); // Hapus typing indicator setelah respons
+
                 if (!response.ok) {
                     throw new Error(`Server returned ${response.status}`);
                 }
 
                 const data = await response.json();
                 if (data.result) {
-                    appendMessage('AhmdAi', data.result, false);
+                    setTimeout(() => {
+                        appendMessage('AhmdAi', data.result, false);
+                    }, 100); // Delay 500ms untuk kesan natural
                 } else {
                     appendMessage('AhmdAi', 'Response format is invalid.', false);
                 }
             } catch (error) {
+                removeTypingIndicator(); // Hapus typing indicator jika ada error
                 appendMessage('AhmdAi', 'Terjadi kesalahan: ' + error.message, false);
             }
         });
@@ -118,6 +125,22 @@
             messageElement.textContent = `${sender}: ${message}`;
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendTypingIndicator() {
+            const typingIndicator = document.createElement('div');
+            typingIndicator.id = 'typing-indicator';
+            typingIndicator.classList.add('mb-3', 'p-2', 'rounded-lg', 'bg-blue-700');
+            typingIndicator.textContent = 'AhmdAi Sedang Mengetik...';
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
         }
     </script>
 </body>
